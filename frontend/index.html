@@ -1,0 +1,350 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enhanced IDS | Cybersecurity Intelligence</title>
+<style>
+:root {
+  --bg: #080d18;
+  --panel: #101827;
+  --panel2: #141f31;
+  --line: #253247;
+  --text: #edf3ff;
+  --muted: #8998b0;
+  --cyan: #45d6e9;
+  --green: #4ce0a0;
+  --red: #ff6b7e;
+  --purple: #a78bfa;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+button, input { font: inherit; }
+button { cursor: pointer; }
+.app { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 245px;
+  background: #0c1321;
+  border-right: 1px solid var(--line);
+  padding: 25px 17px;
+  flex-shrink: 0;
+}
+.brand { display: flex; align-items: center; gap: 12px; padding: 0 7px 30px; }
+.brand-icon {
+  width: 43px; height: 43px; border-radius: 13px;
+  background: #143044; color: var(--cyan);
+  display: grid; place-items: center; font-size: 24px;
+}
+.brand h2 { font-size: 16px; margin: 0 0 4px; }
+.brand small { color: var(--muted); font-size: 11px; }
+.nav-label {
+  color: #64738b; font-size: 10px; font-weight: 800;
+  letter-spacing: 1.7px; padding: 13px 11px;
+}
+.nav {
+  display: flex; gap: 12px; align-items: center;
+  width: 100%; padding: 13px 12px; margin: 3px 0;
+  color: var(--muted); border: 0; border-radius: 9px;
+  background: transparent; text-align: left;
+}
+.nav span { font-size: 17px; width: 22px; }
+.nav:hover, .nav.active {
+  background: #17263a; color: var(--cyan);
+}
+.sidebar-bottom {
+  margin-top: 40px; padding: 14px;
+  border: 1px solid var(--line); border-radius: 12px;
+  background: #101a2a;
+}
+.sidebar-bottom strong { font-size: 12px; }
+.sidebar-bottom p { color: var(--muted); font-size: 11px; line-height: 1.6; }
+.status-dot {
+  display: inline-block; width: 7px; height: 7px;
+  border-radius: 50%; background: var(--green); margin-right: 7px;
+}
+main { min-width: 0; flex: 1; padding: 27px 32px 40px; }
+.topbar {
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 15px; margin-bottom: 30px;
+}
+.eyebrow { color: var(--cyan); font-size: 10px; letter-spacing: 2px; font-weight: 800; }
+h1 { font-size: clamp(24px, 3vw, 32px); margin: 9px 0; letter-spacing: -.8px; }
+.subtitle { color: var(--muted); font-size: 13px; line-height: 1.6; }
+.demo-badge {
+  border: 1px solid #765b2d; color: #ffcf7c;
+  background: #302516; border-radius: 8px;
+  padding: 10px 13px; font-size: 11px; font-weight: 700;
+  white-space: nowrap;
+}
+.grid { display: grid; gap: 17px; }
+.stats { grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 25px 0; }
+.card {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 15px; padding: 20px; min-width: 0;
+}
+.stat-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.stat-label { color: var(--muted); font-size: 12px; }
+.stat-icon {
+  width: 35px; height: 35px; display: grid; place-items: center;
+  border-radius: 10px; background: #182b40; color: var(--cyan);
+}
+.stat-value { font-size: 29px; font-weight: 750; margin: 18px 0 8px; }
+.stat-note { color: var(--muted); font-size: 11px; }
+.cyan { color: var(--cyan); }
+.green { color: var(--green); }
+.red { color: var(--red); }
+.purple { color: var(--purple); }
+.content-grid { grid-template-columns: minmax(0, 1.25fr) minmax(290px, .75fr); }
+.card-heading { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 7px; }
+.card h3 { font-size: 15px; margin: 0; }
+.tag {
+  font-size: 10px; color: var(--muted); padding: 6px 9px;
+  border: 1px solid var(--line); border-radius: 6px;
+}
+.upload {
+  border: 1px dashed #38506c; border-radius: 12px;
+  padding: 27px 15px; text-align: center;
+  margin-top: 20px; background: #0d1625;
+  transition: .2s;
+}
+.upload.drag { border-color: var(--cyan); background: #112438; }
+.upload-symbol { font-size: 30px; margin-bottom: 12px; }
+.upload h4 { margin: 0 0 8px; font-size: 14px; }
+.upload p { font-size: 11px; color: var(--muted); line-height: 1.7; }
+.btn {
+  border: 0; border-radius: 8px; padding: 11px 15px;
+  font-size: 12px; font-weight: 750;
+}
+.btn-primary { background: var(--cyan); color: #06131c; }
+.btn-secondary { background: #1b2a40; color: var(--text); border: 1px solid var(--line); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.file-name { font-size: 12px; color: var(--cyan); margin: 10px 0; overflow-wrap: anywhere; }
+.hint { font-size: 11px; line-height: 1.7; color: var(--muted); margin-top: 16px; }
+.result-box {
+  border: 1px solid var(--line); background: #0c1523;
+  border-radius: 12px; padding: 19px; margin-top: 20px;
+}
+.result-state { color: var(--muted); font-size: 11px; margin-bottom: 14px; }
+.result-label { font-size: 23px; font-weight: 800; margin: 9px 0; }
+.result-description { color: var(--muted); font-size: 12px; line-height: 1.7; }
+.result-placeholder { text-align: center; padding: 20px 5px; }
+.result-placeholder .big-icon { font-size: 30px; color: #53647c; }
+.result-placeholder p { color: var(--muted); font-size: 12px; line-height: 1.8; }
+.result-box .btn { width: 100%; margin-top: 15px; }
+.section-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); margin-top: 17px; }
+.feature { margin-top: 21px; }
+.feature-top { display: flex; justify-content: space-between; gap: 10px; font-size: 11px; margin-bottom: 9px; }
+.feature-top span:first-child { overflow-wrap: anywhere; }
+.bar { height: 6px; background: #253247; border-radius: 10px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, #2e9ebc, #52ddeb); }
+.notice { border-left: 3px solid var(--purple); background: #18182d; padding: 12px; border-radius: 0 8px 8px 0; margin-top: 20px; }
+.notice strong { font-size: 11px; }
+.notice p { font-size: 11px; color: var(--muted); line-height: 1.7; margin-bottom: 0; }
+.footer { text-align: center; color: #65758d; font-size: 10px; margin-top: 27px; line-height: 1.8; }
+.hidden { display: none !important; }
+.mobile-menu { display: none; }
+@media(max-width:1050px) {
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .content-grid, .section-grid { grid-template-columns: 1fr; }
+}
+@media(max-width:700px) {
+  .sidebar { display: none; }
+  main { padding: 22px 15px 30px; }
+  .topbar { align-items: flex-start; flex-direction: column; }
+  .stats { gap: 10px; }
+  .card { padding: 15px; }
+  .stat-value { font-size: 25px; }
+  .demo-badge { white-space: normal; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">⬡</div>
+      <div><h2>Enhanced IDS</h2><small>AI SECURITY PLATFORM</small></div>
+    </div>
+    <div class="nav-label">WORKSPACE</div>
+    <button class="nav active" data-target="overview"><span>◫</span> Overview</button>
+    <button class="nav" data-target="scanner"><span>⌕</span> Traffic Analysis</button>
+    <button class="nav" data-target="explainability"><span>✳</span> Explainable AI</button>
+    <div class="nav-label">PROJECT</div>
+    <button class="nav" data-target="about"><span>ⓘ</span> About the Model</button>
+    <div class="sidebar-bottom">
+      <div><span class="status-dot"></span><strong>Frontend running</strong></div>
+      <p>Demo interface only. Model API is not connected yet.</p>
+    </div>
+  </aside>
+
+  <main>
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">CYBERSECURITY INTELLIGENCE / NSL-KDD</div>
+        <h1 id="pageTitle">Intrusion Detection Dashboard</h1>
+        <div class="subtitle">Analyze network traffic and explore AI-assisted anomaly detection.</div>
+      </div>
+      <div class="demo-badge">● DEMO MODE · API NOT CONNECTED</div>
+    </header>
+
+    <section id="overview">
+      <div class="grid stats">
+        <article class="card">
+          <div class="stat-top"><span class="stat-label">Model architecture</span><span class="stat-icon">⌘</span></div>
+          <div class="stat-value" style="font-size:23px">CNN-BiGRU</div>
+          <div class="stat-note">With attention mechanism</div>
+        </article>
+        <article class="card">
+          <div class="stat-top"><span class="stat-label">Selected features</span><span class="stat-icon">◈</span></div>
+          <div class="stat-value">54<span class="cyan">/122</span></div>
+          <div class="stat-note">MVO-inspired feature selection</div>
+        </article>
+        <article class="card">
+          <div class="stat-top"><span class="stat-label">Dataset</span><span class="stat-icon">▤</span></div>
+          <div class="stat-value">NSL-KDD</div>
+          <div class="stat-note">Binary classification</div>
+        </article>
+        <article class="card">
+          <div class="stat-top"><span class="stat-label">Explainability</span><span class="stat-icon">✳</span></div>
+          <div class="stat-value purple">SHAP</div>
+          <div class="stat-note">Feature contribution analysis</div>
+        </article>
+      </div>
+    </section>
+
+    <section id="scanner" class="grid content-grid">
+      <article class="card">
+        <div class="card-heading"><h3>Network Traffic Analysis</h3><span class="tag">CSV INPUT</span></div>
+        <p class="subtitle">Choose a CSV file containing network traffic features. A backend connection is required for real predictions.</p>
+        <div class="upload" id="dropZone">
+          <div class="upload-symbol">⇧</div>
+          <h4>Upload network traffic CSV</h4>
+          <p>Choose a file or drag it here<br>CSV format · NSL-KDD-style features</p>
+          <input id="csvInput" type="file" accept=".csv,text/csv" class="hidden">
+          <button class="btn btn-primary" id="chooseFile">Choose CSV file</button>
+          <div class="file-name" id="fileName"></div>
+        </div>
+        <div class="hint">Privacy note: this demo only reads the selected filename and first few lines locally. It does not send the file anywhere. Actual inference will be added when the API is ready.</div>
+      </article>
+      <article class="card">
+        <div class="card-heading"><h3>Detection Result</h3><span class="tag">LIVE API: OFF</span></div>
+        <div class="result-box" id="resultBox">
+          <div class="result-placeholder">
+            <div class="big-icon">⌁</div>
+            <p>No analysis has been run.<br>Connect the model API to produce real predictions.</p>
+          </div>
+        </div>
+        <button class="btn btn-secondary" id="demoButton" style="width:100%;margin-top:12px">Preview demo result</button>
+        <p class="hint">Demo results are illustrative only. They are not generated by your trained model.</p>
+      </article>
+    </section>
+
+    <section id="explainability" class="grid section-grid">
+      <article class="card">
+        <div class="card-heading"><h3>Explainable AI · SHAP</h3><span class="tag">SAVED ANALYSIS</span></div>
+        <p class="subtitle">Top features from your existing SHAP importance analysis.</p>
+        <div id="features">
+          <div class="feature"><div class="feature-top"><span>dst_host_srv_count</span><span>100%</span></div><div class="bar"><div class="bar-fill" style="width:100%"></div></div></div>
+          <div class="feature"><div class="feature-top"><span>serror_rate</span><span>~82%</span></div><div class="bar"><div class="bar-fill" style="width:82%"></div></div></div>
+          <div class="feature"><div class="feature-top"><span>flag_SF</span><span>~70%</span></div><div class="bar"><div class="bar-fill" style="width:70%"></div></div></div>
+          <div class="feature"><div class="feature-top"><span>protocol_type_tcp</span><span>~55%</span></div><div class="bar"><div class="bar-fill" style="width:55%"></div></div></div>
+          <div class="feature"><div class="feature-top"><span>service_private</span><span>~44%</span></div><div class="bar"><div class="bar-fill" style="width:44%"></div></div></div>
+          <div class="feature"><div class="feature-top"><span>dst_host_error_rate</span><span>~35%</span></div><div class="bar"><div class="bar-fill" style="width:35%"></div></div></div>
+        </div>
+        <div class="notice"><strong>How to interpret this</strong><p>Bars show relative mean absolute SHAP importance, normalized for display. They do not indicate whether a feature raises or lowers an individual prediction, and they do not establish causation.</p></div>
+      </article>
+      <article class="card" id="about">
+        <div class="card-heading"><h3>Model Overview</h3><span class="tag">PROJECT INFO</span></div>
+        <div class="feature"><div class="feature-top"><span>Dataset</span><strong>NSL-KDD</strong></div></div>
+        <div class="feature"><div class="feature-top"><span>Prediction classes</span><strong>Normal / Anomaly</strong></div></div>
+        <div class="feature"><div class="feature-top"><span>Feature selection</span><strong>MVO-inspired</strong></div></div>
+        <div class="feature"><div class="feature-top"><span>Hyperparameter search</span><strong>ALO-inspired</strong></div></div>
+        <div class="feature"><div class="feature-top"><span>Model</span><strong>CNN + BiGRU + Attention</strong></div></div>
+        <div class="feature"><div class="feature-top"><span>Explainability</span><strong>SHAP</strong></div></div>
+        <div class="notice"><strong>Evaluation transparency</strong><p>In the current test evaluation, anomaly recall was approximately 60.6%. This prototype is for research and demonstration, not production security decisions.</p></div>
+      </article>
+    </section>
+
+    <div class="footer">
+      ENHANCED IDS · EXPLAINABLE AI FOR INTRUSION DETECTION<br>
+      Research prototype · Real-time detection is not enabled
+    </div>
+  </main>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const input = $("csvInput");
+const dropZone = $("dropZone");
+
+$("chooseFile").addEventListener("click", () => input.click());
+
+input.addEventListener("change", () => {
+  const file = input.files[0];
+  $("fileName").textContent = file ? "Selected: " + file.name : "";
+  if (file) {
+    $("resultBox").innerHTML =
+      '<div class="result-placeholder"><div class="big-icon">✓</div>' +
+      '<p><strong style="color:#edf3ff">' + escapeHtml(file.name) +
+      '</strong><br>File selected locally. No prediction was made because the API is not connected.</p></div>';
+  }
+});
+
+function escapeHtml(value) {
+  return value.replace(/[&<>"']/g, c => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  }[c]));
+}
+
+["dragenter", "dragover"].forEach(eventName => {
+  dropZone.addEventListener(eventName, event => {
+    event.preventDefault();
+    dropZone.classList.add("drag");
+  });
+});
+["dragleave", "drop"].forEach(eventName => {
+  dropZone.addEventListener(eventName, event => {
+    event.preventDefault();
+    dropZone.classList.remove("drag");
+  });
+});
+dropZone.addEventListener("drop", event => {
+  const file = event.dataTransfer.files[0];
+  if (file && file.name.toLowerCase().endsWith(".csv")) {
+    const transfer = new DataTransfer();
+    transfer.items.add(file);
+    input.files = transfer.files;
+    input.dispatchEvent(new Event("change"));
+  } else {
+    $("fileName").textContent = "Please select a CSV file.";
+  }
+});
+
+$("demoButton").addEventListener("click", () => {
+  $("resultBox").innerHTML =
+    '<div class="result-state">ILLUSTRATIVE DEMO · NOT A MODEL PREDICTION</div>' +
+    '<div class="result-label cyan">Anomaly (demo)</div>' +
+    '<div class="result-description">This sample display demonstrates how a future result may appear. No network traffic was evaluated by the trained model.</div>' +
+    '<div class="notice"><strong>Next step</strong><p>Connect the FastAPI backend to replace this preview with an actual model prediction.</p></div>';
+});
+
+document.querySelectorAll(".nav").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".nav").forEach(item => item.classList.remove("active"));
+    button.classList.add("active");
+    const target = $(button.dataset.target);
+    if (target) {
+      target.scrollIntoView({behavior:"smooth", block:"start"});
+      $("pageTitle").textContent = button.textContent.trim();
+    }
+  });
+});
+</script>
+</body>
+</html>

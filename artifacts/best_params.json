@@ -1,0 +1,6 @@
+{
+    "learning_rate": 0.001,
+    "gru_units": 64,
+    "dense_units": 32,
+    "dropout_rate": 0.3
+}
